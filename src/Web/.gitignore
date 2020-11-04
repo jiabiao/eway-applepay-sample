@@ -1,0 +1,7 @@
+# ignore sqlite database file
+*.db
+
+# ignore the certifice files
+*.pfx
+*.p12
+*.cer

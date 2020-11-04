@@ -1,0 +1,24 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+@foreach (var product in Model.Products)
+{
+    <div class="card mb-3 box-shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="mb-4">
+                    <img alt="@product.Text" src="@product.Image" width="128" height="128" />
+                </div>
+                <div class="mb-2"></div>
+                <div class="mb-6">
+                    <h4>@product.Text</h4>
+                    <h1 class="card-title">@product.Price.ToString("c")</h1>
+                    <a asp-area="" asp-page="/Checkout" asp-route-id="@product.Id" class="btn btn-lg btn-block btn-outline-primary">Buy Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
