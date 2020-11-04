@@ -8,7 +8,7 @@ namespace eWAY.Samples.MonkeyStore
     {
         public static void LoadMerchantIdentifierCertificate(IConfiguration configuration)
         {
-            using X509Store store = new X509Store(StoreName.TrustedPublisher, StoreLocation.LocalMachine);
+            using X509Store store = new X509Store(StoreName.Root, StoreLocation.LocalMachine);
             store.Open(OpenFlags.ReadOnly);
             var thumbprint = configuration.GetValue<string>("ApplePay:MerchantIdentifierCertificate:Thumbprint");
             var certificates = store.Certificates.Find(X509FindType.FindByThumbprint,
