@@ -1,0 +1,20 @@
+@model System.Globalization.RegionInfo;
+@section ApplePay
+{
+    @*
+        Add meta tags for Apple Pay discoverability by web crawlers.
+    *@
+    <meta property="product:payment_method" content="ApplePay" />
+    <meta name="payment-country-code" content="@Model.TwoLetterISORegionName" />
+    <meta name="payment-currency-code" content="@Model.ISOCurrencySymbol" />
+
+    @*
+        Add link tags for the icon to display on a paired
+        device when a payment is started from Safari on macOS.
+    *@
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon-120x120.png" sizes="120x120" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon-152x152.png" sizes="152x152" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon-180x180.png" sizes="180x180" />
+    <link rel="apple-touch-icon-precomposed" href="images/apple-touch-icon.png" />
+}

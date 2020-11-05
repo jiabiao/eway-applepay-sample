@@ -1,17 +1,20 @@
-using eWAY.Samples.MonkeyStore.Data;
+// Copyright (c) eWAY and Contributors. All rights reserved.
+// Licensed under the MIT License
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MonkeyStore.Data.Catalog;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using System;
 using System.Threading.Tasks;
 
-namespace eWAY.Samples.MonkeyStore.Web
+namespace MonkeyStore
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
@@ -19,17 +22,22 @@ namespace eWAY.Samples.MonkeyStore.Web
 
             using (var scope = host.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
-                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                var serviceProvider = scope.ServiceProvider;
+                var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger(typeof(Program));
                 try
                 {
-                    var storeContext = services.GetRequiredService<StoreContext>();
+                    logger.LogInformation("Migrate databases...");
+
+                    var storeContext = serviceProvider.GetRequiredService<CatalogContext>();
                     storeContext.Database.Migrate();
-                    await StoreContextSeed.SeedAsync(storeContext, loggerFactory);
+
+                    logger.LogInformation("Seeding data into databases...");
+
+                    await CatalogContextSeed.SeedAsync(storeContext, loggerFactory);
                 }
                 catch (Exception ex)
                 {
-                    var logger = loggerFactory.CreateLogger<Program>();
                     logger.LogError(ex, "An error occurred seeding the DB.");
                 }
             }
@@ -39,7 +47,7 @@ namespace eWAY.Samples.MonkeyStore.Web
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureLogging((builderContext, loggingBuilder)=> 
+                .ConfigureLogging((builderContext, loggingBuilder) =>
                 {
                     loggingBuilder.ClearProviders();
 

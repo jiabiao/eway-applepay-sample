@@ -1,17 +1,18 @@
-using eWAY.Samples.MonkeyStore.Data;
-using eWAY.Samples.MonkeyStore.PaymentGateway;
-using eWAY.Samples.MonkeyStore.PaymentGateway.Services;
-using eWAY.Samples.MonkeyStore.Repositories;
+// Copyright (c) eWAY and Contributors. All rights reserved.
+// Licensed under the MIT License
+
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Net.Http;
+using System;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace eWAY.Samples.MonkeyStore.Web
+namespace MonkeyStore
 {
     public class Startup
     {
@@ -25,6 +26,14 @@ namespace eWAY.Samples.MonkeyStore.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Search all the assemblies in the current app domain to inject all the mapping profiles
+            // between model and DTO classes which inherit from Profile class in AutoMapper
+            var assemblies = AppDomain.CurrentDomain
+                                      .GetAssemblies()
+                                      .Where(assembly => assembly.FullName.StartsWith(nameof(MonkeyStore)))
+                                      .ToArray();
+            services.AddAutoMapper(assemblies);
+
             services.AddControllers()
                     .AddJsonOptions(options =>
                     {
@@ -32,33 +41,22 @@ namespace eWAY.Samples.MonkeyStore.Web
                         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                         options.JsonSerializerOptions.IgnoreNullValues = true;
                     });
-            services.AddRazorPages();
+            services.AddRazorPages()
+                    .AddRazorRuntimeCompilation();
 
-            services.AddHttpClient();
-
-            services.AddDbContext<StoreContext>();
-
-            services.Configure<PaymentGatewayOptions>(Configuration.GetSection(PaymentGatewayOptions.DEFAULT_SECTION));
-            services.AddScoped<IPaymentService, PaymentService>();
-            services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
-
-            ConfigureApplePayHttpClient(services);
+            ConfigureAppServices(services);
         }
 
-        /// <summary>
-        /// Typed HTTP client with the Two-Way TLS authentication enabled for Apple Pay merchant validation.
-        /// </summary>
-        private void ConfigureApplePayHttpClient(IServiceCollection services)
+        private void ConfigureAppServices(IServiceCollection services)
         {
-            ApplePayCertificates.LoadMerchantIdentifierCertificate(Configuration);
-            var cert = ApplePayCertificates.MerchantIdentifierCertificate;
-            services.AddHttpClient(Constants.NamedHttpClientApplePay, c => { })
-                    .ConfigurePrimaryHttpMessageHandler(() =>
-                    {
-                        var handler = new HttpClientHandler();
-                        handler.ClientCertificates.Add(cert);
-                        return handler;
-                    });
+            services.ConfigureCatalogDataStore();
+
+            services.ConfigureMerchantIdentityValidation();
+
+            services.ConfigurePaymentGateway()
+                    .AddTransparentRedirect()
+                    .AddDirectPayment()
+                    .AddSharedPage();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -77,6 +75,10 @@ namespace eWAY.Samples.MonkeyStore.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

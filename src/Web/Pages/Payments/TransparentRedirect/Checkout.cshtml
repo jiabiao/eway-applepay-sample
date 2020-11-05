@@ -1,0 +1,53 @@
+@page
+@model CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h1>
+    Checkout - Transparent Redirect Solution Demo
+</h1>
+
+@*
+    Used to display a message in browsers where Apple Pay cannot be used.
+*@
+<div class="alert alert-warning apple-pay-error col d-none" role="alert"></div>
+
+@{
+    await Html.PartialAsync("_ApplePayMetaPartial", Model.Region);
+    await Html.RenderPartialAsync("_ProductItemPartial", Model.Product);
+}
+
+<div>
+    <pre>
+        <code id="echoConsole" class="d-none" data-echo-mode="@Model.EchoMode">
+        </code>
+    </pre>
+</div>
+
+<div class="row mt-3">
+    <form class="col">
+        @*
+            Used to render the setup Apple Pay button, which is shown if the
+            JavaScript determines that Apple Pay is available, but there are
+            no payment cards set up in Wallet.
+        *@
+        <div id="apple-pay-set-up-button" class="apple-pay apple-pay-set-up-button apple-pay-set-up-button-black input-block-level d-none"></div>
+        @*
+            Used to render the Apple Pay button, which is shown if the
+            JavaScript determines that Apple Pay is available for use.
+        *@
+        <div id="apple-pay-button"
+             data-merchant-identifider="@Model.MerchantIdentifier"
+             data-validation-url="@Model.ValidationUrl"
+             data-initial-url="@Model.InitialUrl"
+             data-country-code="@Model.CountryCode"
+             data-currency-code="@Model.CurrencyCode"
+             class="apple-pay input-block-level d-none"></div>
+    </form>
+</div>
+
+@section scripts {
+    <script src="~/js/payments/apple-pay.transparent-redirect.js" asp-append-version="true"></script>
+    <script src="~/js/payments/apple-pay.js" asp-append-version="true"></script>
+}

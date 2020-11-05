@@ -1,9 +1,21 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
 root = true
 
 [*]
 charset = utf-8
-end_of_line = crlf
 indent_size = 4
 indent_style = space
 trim_trailing_whitespace = false
 insert_final_newline = true
+
+# Matches multiple files with brace expansion notation
+# Set default file header
+[*.{cs,cshtml,js,css}]
+file_header_template = Copyright (c) eWAY and Contributors. All rights reserved.\nLicensed under the MIT License
+
+# Matches the exact files either json or yaml
+[*.{json,yml}]
+indent_style = space
+indent_size = 2

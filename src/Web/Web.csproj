@@ -1,21 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>eWAY.Samples.MonkeyStore.Web</RootNamespace>
-    <AssemblyName>$(RootNamespace)</AssemblyName>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>MonkeyStore</RootNamespace>
+    <AssemblyName>MonkeyStore.Web</AssemblyName>
     <UserSecretsId>d8ae44b7-9c32-4d67-8d3b-eaaa13de39e2</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification" Version="4.1.0" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="4.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.9" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="NLog" Version="4.7.5" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.3" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NLog" Version="4.7.6" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.10.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,5 +29,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApplicationCore\ApplicationCore.csproj" />
+    <ProjectReference Include="..\PaymentGateway\DirectPayment\DirectPayment.csproj" />
+    <ProjectReference Include="..\PaymentGateway\ResponsiveSharedPage\ResponsiveSharedPage.csproj" />
+    <ProjectReference Include="..\PaymentGateway\TransparentRedirect\TransparentRedirect.csproj" />
   </ItemGroup>
 </Project>

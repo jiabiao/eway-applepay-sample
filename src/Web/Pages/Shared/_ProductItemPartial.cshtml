@@ -1,0 +1,10 @@
+@model MonkeyStore.DTOs.ProductDto
+
+<div class="card border-light" style="max-width: 16rem;">
+    <img class="card-img-top" alt="@Model.Name" src="@Model.Image" />
+    <div class="card-body" data-product-id="@Model.Id">
+        <h5 class="card-title" data-product-name="@Model.Name">@Model.Name</h5>
+        <p class="card-text" data-product-price="@Model.Price">@Model.Price.ToString("c")</p>
+        <p class="card-text"><small class="text-muted">Some useful description for this product...</small></p>
+    </div>
+</div>

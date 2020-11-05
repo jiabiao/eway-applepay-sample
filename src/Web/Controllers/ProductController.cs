@@ -1,29 +1,32 @@
-using eWAY.Samples.MonkeyStore.Models;
-using eWAY.Samples.MonkeyStore.Repositories;
-using eWAY.Samples.MonkeyStore.Web.Specifications;
+// Copyright (c) eWAY and Contributors. All rights reserved.
+// Licensed under the MIT License
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MonkeyStore.Models;
+using MonkeyStore.Repositories;
+using MonkeyStore.Specifications;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace eWAY.Samples.MonkeyStore.Controllers
+namespace MonkeyStore.Controllers
 {
-    [Route("api/{controller}")]
+    [Route(Constants.ROUTE_TEMPLATE_CONTROLLER)]
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IAsyncRepository<Product> productRepository;
+        private readonly IAsyncRepository<Product> _productRepository;
 
         public ProductController(IAsyncRepository<Product> productRepository)
         {
-            this.productRepository = productRepository;
+            this._productRepository = productRepository;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IEnumerable<Product>> ListAsync()
         {
-            return await productRepository.ListAllAsync();
+            return await _productRepository.ListAllAsync();
         }
 
         [HttpGet("{id}")]
@@ -32,7 +35,7 @@ namespace eWAY.Samples.MonkeyStore.Controllers
         public async Task<ActionResult<Product>> GetAsync(int id)
         {
             var spec = new ProductSpecification(new[] { id });
-            var product = await productRepository.FirstOrDefaultAsync(spec);
+            var product = await _productRepository.FirstOrDefaultAsync(spec);
 
             if (product == null)
                 return NotFound();

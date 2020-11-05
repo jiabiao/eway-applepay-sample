@@ -1,0 +1,21 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>
+    Product Catalog - Responsive Shared Page Solution Demo
+</h1>
+
+<div class="card-columns">
+    @foreach (var product in Model.Products)
+    {
+        <div class="card">
+            <div class="card-body">
+                @{ await Html.RenderPartialAsync("_ProductItemPartial", product); }
+                <a asp-page="./Checkout" asp-route-id="@product.Id" class="btn btn-primary btn-block">Buy Now</a>
+            </div>
+        </div>
+    }
+</div>
