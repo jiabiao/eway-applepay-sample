@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace eWAY.Samples.MonkeyStore.Controllers
 {
-    [Route("api/{controller}")]
+    [Route("api/{controller}/{action}")]
     [ApiController]
     public class PurchaseController : ControllerBase
     {
@@ -145,7 +145,6 @@ namespace eWAY.Samples.MonkeyStore.Controllers
                     LastName = "Doe",
                     Phone = "00 00 00 00",
                     PostalCode = "00 00",
-                    ShippingMethod = "Express",
                     Street1 = "12 Redesdale Rd",
                 },
                 CustomerIP = HttpContext.Connection.RemoteIpAddress.ToString(),
@@ -174,7 +173,7 @@ namespace eWAY.Samples.MonkeyStore.Controllers
             return response;
         }
 
-        [HttpPost("validate")]
+        [HttpPost]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

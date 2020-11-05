@@ -29,7 +29,7 @@ namespace eWAY.Samples.MonkeyStore.Web.Pages
         {
             var spec = new ProductSpecification(new[] { id });
             Product =await productRepository.FirstOrDefaultAsync(spec);
-            PayUrl = $"{paymentGatewayOptions.CurrentValue.Endpoint.TrimEnd('/')}/{PaymentGateway.PaymentGatewayOptions.PATH_TR_ACCESS_CODE.TrimStart('/')}";
+            PayUrl = $"{paymentGatewayOptions.CurrentValue.Endpoint.TrimEnd('/')}/AccessCode";
         }
     }
 }

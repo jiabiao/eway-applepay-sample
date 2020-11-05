@@ -145,13 +145,12 @@ monkeyStore = {
                 var urlParams = new URLSearchParams(window.location.search);
                 var productId = urlParams.get('id');
                 var order = {
-                    ProductId: `${productId}`,
-                    //PaymentMethod: "ApplePay",
-                    //ApplePayPaymentToken: event.payment.token
+                    ProductId: +productId,
+                    PaymentMethod: "ApplePay",
                 };
 
                 // Post payment token to backend as mocking purchasing.
-                fetch('api/AccessCode', {
+                fetch('api/Purchase/AccessCode', {
                     method: 'POST',
                     cache: 'no-cache',
                     headers: {
@@ -159,33 +158,33 @@ monkeyStore = {
                     },
                     body: JSON.stringify(order)
                 }).then(response => {
-                    // Complete validation by passing the merchant session to the Apple Pay session.
-                    console.log('create AccessCode success:')
-                    console.log(response);
+                    console.log('AccessCode creation response', response);
                     response.json().then(data => {
-                        console.log('AccessCode response data:')
-                        console.log(data);
+                        console.log(`AccessCode: ${data.accessCode}`);
+                        console.log(`Payment Token:\n ${JSON.stringify(event.payment.token)}`);
 
                         var paymentPayload = new FormData();
-
-                        paymentPayload.append("EWAY_ACCESSCODE", data.AccessCode);
                         paymentPayload.append("EWAY_PAYMENTTYPE", "ApplePay");
+                        paymentPayload.append("EWAY_ACCESSCODE", data.accessCode);
                         paymentPayload.append("APPLEPAY_NETWORKTOKEN", event.payment.token.PaymentData);
-                        
-                        //document.querySelector('meta[property="eway-link"]').getAttribute('content')
+
                         var endpoint = document.querySelector("[property~=eway-link][content]").content;
-                        var request = new XMLHttpRequest();
-                        request.open("POST", endpoint);
-                        request.onload = function() {
+                        var payUrl = `${endpoint}/${data.accessCode}`;
+                        console.log(`Submit payment request to eWAY: ${payUrl}`);
+
+                        fetch(payUrl, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            body: paymentPayload,
+                        })
+                        .then(response => {
                             console.log('payment response.');
-                            console.log(request.response);
-                            $(".token-payment-data").text(JSON.stringify(request.response));   
-                        }
-                        request.onerror = function(error) {
-                            console.log('error on payment request to RAPID.');
-                            console.log(error);
-                        };
-                        request.send(paymentPayload);
+                            console.log(response);
+                            response.json().then(data => {
+                                $(".token-payment-data").text(JSON.stringify(data));
+                            });
+                        })
+                        .catch(error => console.log('error on payment request to RAPID.', error));
                     });
                 }).catch(error => {
                     console.error('error on AccessCode.');

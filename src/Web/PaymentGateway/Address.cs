@@ -2,7 +2,7 @@ namespace eWAY.Samples.MonkeyStore.PaymentGateway
 {
     public class Address
     {
-        public string ShippingMethod { get; set; }
+        public string ShippingMethod { get; protected set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Street1 { get; set; }
@@ -12,5 +12,10 @@ namespace eWAY.Samples.MonkeyStore.PaymentGateway
         public string Country { get; set; }
         public string PostalCode { get; set; }
         public string Phone { get; set; }
+
+        public Address()
+        {
+            ShippingMethod = "NextDay";
+        }
     }
 }
