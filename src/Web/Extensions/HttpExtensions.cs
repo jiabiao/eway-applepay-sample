@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.Mvc
                 Query = $"order={orderId}"
             };
 
-            if(request.Host.Port != null)
+            if (request.Host.Port != null)
             {
                 uri.Port = (int)request.Host.Port;
             }

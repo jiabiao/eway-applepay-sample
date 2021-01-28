@@ -5,7 +5,7 @@ using MonkeyStore.PaymentGateway.Messages;
 
 namespace MonkeyStore.PaymentGateway.SharedPage.Messages
 {
-    public class CreateAccessCodeSharedResponse: CreateAccessCodeResponse
+    public class CreateAccessCodeSharedResponse : CreateAccessCodeResponse
     {
         public string SharedPaymentUrl { set; get; }
     }

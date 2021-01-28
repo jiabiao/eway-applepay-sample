@@ -3,7 +3,7 @@
 
 namespace MonkeyStore.PaymentGateway.Messages
 {
-    public class CreateAccessCodeResponse: ResponseBase
+    public class CreateAccessCodeResponse : ResponseBase
     {
         public string AccessCode { get; set; }
     }

@@ -9,6 +9,6 @@ namespace MonkeyStore.PaymentGateway.Options
 
         public GatewayCredential Credential { get; set; }
 
-        public GatewayEndpoints Endpoints { get; set; }
+        public string Endpoint { get; set; }
     }
 }

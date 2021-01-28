@@ -19,7 +19,7 @@ namespace MonkeyStore.PaymentGateway.DirectPayment.Messages
             TransactionType = "Ecom";
         }
 
-        public DirectPaymentRequest(string transactionType): base(transactionType)
+        public DirectPaymentRequest(string transactionType) : base(transactionType)
         {
         }
     }

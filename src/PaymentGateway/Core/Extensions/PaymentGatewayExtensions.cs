@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using MonkeyStore.PaymentGateway;
 using MonkeyStore.PaymentGateway.Options;
 using MonkeyStore.PaymentGateway.Services;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -20,6 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.ConfigurePaymentGatewayOptions();
             services.TryAddSingleton<GatewayAuthenticationBuilder>();
             services.TryAddScoped<IQueryService, DefaultQueryService>();
+            services.TryAddScoped<IUriComposer, DefaultUriComposer>();
             return services;
         }
 
@@ -39,19 +41,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     .Validate(options => !string.IsNullOrEmpty(options.Secret)
                                        , $"'{nameof(GatewayCredential.Secret)}' must be configured for the gateway credential.");
 
-            services.AddOptions<GatewayEndpoints>()
-                    .Configure<IConfiguration>((options, configuration) =>
-                    {
-                        configuration.GetSection(GatewayEndpoints.DEFAULT_SECTION)
-                                     .Bind(options);
-                    })
-                    .Validate(options => !string.IsNullOrEmpty(options.DirectPayment)
-                                       , $"'{nameof(GatewayEndpoints.DirectPayment)}' must be configured for the gateway endpoints.")
-                    .Validate(options => !string.IsNullOrEmpty(options.TransparentRedirect)
-                                       , $"'{nameof(GatewayEndpoints.TransparentRedirect)}' must be configured for the gateway endpoints.")
-                    .Validate(options => !string.IsNullOrEmpty(options.ResponsiveSharedPage)
-                                       , $"'{nameof(GatewayEndpoints.ResponsiveSharedPage)}' must be configured for the gateway endpoints.");
-
             services.AddOptions<GatewayOptions>()
                     .Configure<IConfiguration>((options, configuration) =>
                     {
@@ -60,8 +49,11 @@ namespace Microsoft.Extensions.DependencyInjection
                     })
                     .Validate(options => options.Credential != null
                                        , $"'{nameof(GatewayOptions.Credential)}' must be configured for the gateway.")
-                    .Validate(options => options.Endpoints != null
-                                       , $"'{nameof(GatewayOptions.Endpoints)}' must be configured for the gateway.");
+                    .Validate(options => options.Endpoint != null
+                                       , $"'{nameof(GatewayOptions.Endpoint)}' must be configured for the gateway.")
+                    .Validate(options => Uri.TryCreate(options.Endpoint, UriKind.Absolute, out Uri uri)
+                                         && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+                                       , $"'{nameof(GatewayOptions.Endpoint)}' must be a valid url endpoint for the gateway.");
         }
     }
 }

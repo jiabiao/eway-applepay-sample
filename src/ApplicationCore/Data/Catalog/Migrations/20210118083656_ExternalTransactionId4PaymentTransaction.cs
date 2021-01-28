@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿// Copyright (c) eWAY and Contributors. All rights reserved.
+// Licensed under the MIT License
+
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MonkeyStore.Data.Catalog.Migrations
 {

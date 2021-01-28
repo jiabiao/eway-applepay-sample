@@ -3,11 +3,9 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Options;
 using MonkeyStore.Models;
 using MonkeyStore.PaymentGateway;
 using MonkeyStore.PaymentGateway.Messages;
-using MonkeyStore.PaymentGateway.Options;
 using MonkeyStore.PaymentGateway.Services;
 using MonkeyStore.PaymentGateway.SharedPage.Messages;
 using MonkeyStore.Repositories;
@@ -26,8 +24,7 @@ namespace MonkeyStore.Pages.Payments.ResponsiveSharedPage
         public CheckoutModel(IAsyncRepository<Product> productRepository,
                              IAsyncRepository<Order> orderRepository,
                              IAsyncRepository<PaymentTransaction> transactionRepository,
-                             IAccessCodeSharedProvider<CreateAccessCodeSharedResponse> accessCodeProvider,
-                             IOptionsMonitor<GatewayEndpoints> gatewayEndpoints)
+                             IAccessCodeSharedProvider<CreateAccessCodeSharedResponse> accessCodeProvider)
         {
             _productRepository = productRepository;
             _orderRepository = orderRepository;

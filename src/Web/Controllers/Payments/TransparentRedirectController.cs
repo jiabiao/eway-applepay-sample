@@ -3,12 +3,11 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using MonkeyStore.DTOs.Payments.TransparentRedirect;
 using MonkeyStore.Models;
 using MonkeyStore.PaymentGateway;
+using MonkeyStore.PaymentGateway.Constants;
 using MonkeyStore.PaymentGateway.Messages;
-using MonkeyStore.PaymentGateway.Options;
 using MonkeyStore.PaymentGateway.Services;
 using MonkeyStore.Repositories;
 using System.Net;
@@ -25,19 +24,19 @@ namespace MonkeyStore.Controllers.Payments
         private readonly IAsyncRepository<Order> _orderRepository;
         private readonly IAsyncRepository<PaymentTransaction> _transactionRepository;
         private readonly IAccessCodeProvider _accessCodeService;
-        private readonly IOptionsMonitor<GatewayEndpoints> _gatewayEndpoints;
+        private readonly IUriComposer _uriComposer;
 
         public TransparentRedirectController(IAsyncRepository<Product> productRepository,
                                   IAsyncRepository<Order> orderRepository,
                                   IAsyncRepository<PaymentTransaction> transactionRepository,
                                   IAccessCodeProvider accessCodeProvider,
-                                  IOptionsMonitor<GatewayEndpoints> gatewayEndpoints)
+                                  IUriComposer uriComposer)
         {
             _productRepository = productRepository;
             _orderRepository = orderRepository;
             _transactionRepository = transactionRepository;
             _accessCodeService = accessCodeProvider;
-            _gatewayEndpoints = gatewayEndpoints;
+            _uriComposer = uriComposer;
         }
 
         [HttpPost]
@@ -94,7 +93,7 @@ namespace MonkeyStore.Controllers.Payments
 
             var responsePayload = new InitialResponse
             {
-                Endpoint = $"{_gatewayEndpoints.CurrentValue.TransparentRedirect.TrimEnd('/')}/AccessCode",
+                Endpoint = _uriComposer.Build(ResourceTemplates.TEMPLATE_TRANSACTION_TR),
                 AccessCode = createAccessCodeResponse.AccessCode,
                 TransactionId = newTransaction.Id,
             };

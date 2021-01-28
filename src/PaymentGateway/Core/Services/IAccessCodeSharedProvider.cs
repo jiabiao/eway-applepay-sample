@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MonkeyStore.PaymentGateway.Services
 {
-    public interface IAccessCodeSharedProvider<TResponse> where TResponse: CreateAccessCodeResponse
+    public interface IAccessCodeSharedProvider<TResponse> where TResponse : CreateAccessCodeResponse
     {
         Task<TResponse> CreateAccessCodeSharedAsync(CreateAccessCodeRequest request);
     }

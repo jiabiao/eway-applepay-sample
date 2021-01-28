@@ -1,9 +1,8 @@
 // Copyright (c) eWAY and Contributors. All rights reserved.
 // Licensed under the MIT License
 
-using Microsoft.Extensions.Options;
+using MonkeyStore.PaymentGateway.Constants;
 using MonkeyStore.PaymentGateway.Messages;
-using MonkeyStore.PaymentGateway.Options;
 using MonkeyStore.PaymentGateway.Services;
 using MonkeyStore.PaymentGateway.SharedPage.Messages;
 using System.Net.Http;
@@ -18,16 +17,16 @@ namespace MonkeyStore.PaymentGateway.SharedPage
     public class SharedPageService : IAccessCodeSharedProvider<CreateAccessCodeSharedResponse>
     {
         private readonly GatewayAuthenticationBuilder _authBuilder;
-        private readonly IOptionsMonitor<GatewayEndpoints> _optionsMonitor;
+        private readonly IUriComposer _uriComposer;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly JsonSerializerOptions _serializerOptions;
 
         public SharedPageService(GatewayAuthenticationBuilder authBuilder,
-                                 IOptionsMonitor<GatewayEndpoints> optionsMonitor,
+                                 IUriComposer uriComposer,
                                  IHttpClientFactory httpClientFactory)
         {
             _authBuilder = authBuilder;
-            _optionsMonitor = optionsMonitor;
+            _uriComposer = uriComposer;
             _httpClientFactory = httpClientFactory;
 
             _serializerOptions = new JsonSerializerOptions
@@ -46,9 +45,7 @@ namespace MonkeyStore.PaymentGateway.SharedPage
             var jsonBody = JsonSerializer.Serialize(request, _serializerOptions);
             var stringContent = new StringContent(jsonBody, Encoding.UTF8, MediaTypeNames.Application.Json);
 
-            var endpoint = _optionsMonitor.CurrentValue.ResponsiveSharedPage;
-            var requestUri = $"{endpoint.TrimEnd('/')}/AccessCodesShared";
-
+            var requestUri = _uriComposer.Build(ResourceTemplates.TEMPLATE_ACCESS_CODES_SHARED);
             var response = await httpClient.PostAsync(requestUri, stringContent);
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();

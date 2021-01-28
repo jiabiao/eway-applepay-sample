@@ -1,8 +1,7 @@
 // Copyright (c) eWAY and Contributors. All rights reserved.
 // Licensed under the MIT License
 
-using Microsoft.Extensions.Options;
-using MonkeyStore.PaymentGateway.Options;
+using MonkeyStore.PaymentGateway.Constants;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -11,14 +10,14 @@ namespace MonkeyStore.PaymentGateway.Services
     public class DefaultQueryService : IQueryService
     {
         private readonly GatewayAuthenticationBuilder _authBuilder;
-        private readonly IOptionsMonitor<GatewayEndpoints> _optionsMonitor;
+        private readonly IUriComposer _uriComposer;
         private readonly IHttpClientFactory _httpClientFactory;
         public DefaultQueryService(GatewayAuthenticationBuilder authBuilder,
-                                   IOptionsMonitor<GatewayEndpoints> optionsMonitor,
+                                   IUriComposer uriComposer,
                                    IHttpClientFactory httpClientFactory)
         {
             _authBuilder = authBuilder;
-            _optionsMonitor = optionsMonitor;
+            _uriComposer = uriComposer;
             _httpClientFactory = httpClientFactory;
         }
 
@@ -27,8 +26,8 @@ namespace MonkeyStore.PaymentGateway.Services
             var httpClient = _httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = _authBuilder.Build();
 
-            var endpoint = _optionsMonitor.CurrentValue.DirectPayment; // The query endpoint is the same for all API.
-            var response = await httpClient.GetAsync($"{endpoint.TrimEnd('/')}/AccessCode");
+            var requestUri = _uriComposer.Build(ResourceTemplates.TEMPLATE_TRANSACTION_BY_ACCESS_CODE, (ResourceTemplates.PARAM_NAME_ACCESS_CODE, accessCode));
+            var response = await httpClient.GetAsync(requestUri);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
@@ -38,8 +37,8 @@ namespace MonkeyStore.PaymentGateway.Services
             var httpClient = _httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = _authBuilder.Build();
 
-            var endpoint = _optionsMonitor.CurrentValue.DirectPayment; // The query endpoint is the same for all API.
-            var response = await httpClient.GetAsync($"{endpoint.TrimEnd('/')}/Transactions/{id}");
+            var requestUri = _uriComposer.Build(ResourceTemplates.TEMPLATE_TRANSACTION_BY_ID, (ResourceTemplates.PARAM_NAME_TRANSACTION_ID, id));
+            var response = await httpClient.GetAsync(requestUri);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }

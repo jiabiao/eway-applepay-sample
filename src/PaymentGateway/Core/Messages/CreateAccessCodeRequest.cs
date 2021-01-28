@@ -19,6 +19,6 @@ namespace MonkeyStore.PaymentGateway.Messages
         }
 
         public CreateAccessCodeRequest(string transactionType) : base(transactionType)
-        {}
+        { }
     }
 }
